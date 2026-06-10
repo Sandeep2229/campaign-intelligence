@@ -35,4 +35,4 @@ cycles complete.
 
 ## LangSmith Trace
 
-![LangSmith Trace](trace.png)
+![LangSmith Trace](screenshot.png)
