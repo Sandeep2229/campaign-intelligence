@@ -19,6 +19,10 @@ No agent communicates with another directly.
 - No supervisor agent: routing is driven by state values via conditional edges
 - Persistent execution: agents run in a continuous loop until status is done
 - Full observability: every node execution traced in LangSmith
+- Persistent revision loop: the critic agent evaluates campaign angles and 
+rejects weak ones, automatically routing back to the strategist for new 
+angles. The loop runs until the critic approves or a maximum of 3 revision 
+cycles complete.
 
 ## How to Run
 
