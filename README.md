@@ -28,3 +28,10 @@ No agent communicates with another directly.
 4. Add your API keys to a .env file
 5. Run python main.py
 
+## Built for
+
+Demonstrating production-ready multi-agent architecture patterns 
+
+## LangSmith Trace
+
+![LangSmith Trace](trace.png)
