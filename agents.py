@@ -60,6 +60,7 @@ def critic_agent(state: CampaignState) -> dict:
 
     angles = state["campaign_angles"]
     angles_text = "\n".join(angles)
+    revision_count = state["revision_count"]
 
     response = llm.invoke(
         f"""You are a harsh but fair campaign critic.
@@ -67,26 +68,36 @@ def critic_agent(state: CampaignState) -> dict:
 Review these campaign angles:
 {angles_text}
 
-Pick the strongest angle and explain why.
-Then list two weaknesses to fix.
+Are these angles strong enough for a real campaign? Be strict.
 
-Format your response as:
+Format your response exactly as:
+VERDICT: APPROVE or REVISE
 SELECTED: [paste the winning angle here]
-REASON: [why it is strongest]
+REASON: [why]
 WEAKNESSES: [two things to improve]"""
     )
 
     content = response.content
     selected = ""
+    verdict = "APPROVE"
+
     for line in content.split("\n"):
+        if line.startswith("VERDICT:"):
+            verdict = line.replace("VERDICT:", "").strip()
         if line.startswith("SELECTED:"):
             selected = line.replace("SELECTED:", "").strip()
+
+    # Force approve after 3 revisions
+    if revision_count >= 3:
+        verdict = "APPROVE"
+
+    next_stage = "critique_approved" if verdict == "APPROVE" else "critique_rejected"
 
     return {
         "critic_feedback": content,
         "selected_angle": selected,
-        "current_stage": "critique_complete",
-        "status": "in_progress"
+        "current_stage": next_stage,
+        "revision_count": revision_count + 1
     }
 
 
