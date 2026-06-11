@@ -22,3 +22,4 @@ class CampaignState(TypedDict):
     current_stage: str
     revision_count: int
     status: str
+    routing_table: Optional[dict]

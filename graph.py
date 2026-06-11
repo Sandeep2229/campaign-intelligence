@@ -2,20 +2,20 @@ from langgraph.graph import StateGraph, END
 from state import CampaignState
 from agents import research_agent, strategist_agent, critic_agent, writer_agent
 
+DEFAULT_ROUTING_TABLE = {
+    "research_complete": "strategist",
+    "strategy_complete": "critic",
+    "critique_approved": "writer",
+    "critique_rejected": "strategist",
+    "complete": END
+}
+
 def should_continue(state: CampaignState) -> str:
     stage = state["current_stage"]
-
-    if stage == "research_complete":
-        return "strategist"
-    elif stage == "strategy_complete":
-        return "critic"
-    elif stage == "critique_approved":
-        return "writer"
-    elif stage == "critique_rejected":
-        print(f"--- Critic rejected. Revision {state['revision_count']} ---")
-        return "strategist"
-    else:
-        return END
+    routing_table = state.get("routing_table") or DEFAULT_ROUTING_TABLE
+    next_step = routing_table.get(stage, END)
+    print(f"--- Routing: {stage} -> {next_step} ---")
+    return next_step
 
 def build_graph():
     graph = StateGraph(CampaignState)
